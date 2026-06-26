@@ -4,6 +4,7 @@ import Header from './components/layout/Header'
 import Login from './views/Login'
 import Dashboard from './views/Dashboard'
 import ListaClientes from './views/ListaClientes'
+import DetalleCliente from './views/DetalleCliente'
 
 const RutaProtegida = ({ children }) => {
   const { admin } = useAdmin()
@@ -24,6 +25,11 @@ const App = () => {
         <Route path="/clientes" element={
           <RutaProtegida>
             <ListaClientes />
+          </RutaProtegida>
+        } />
+        <Route path="/clientes/:id" element={
+          <RutaProtegida>
+            <DetalleCliente />
           </RutaProtegida>
         } />
         <Route path="/" element={<Navigate to="/dashboard" />} />

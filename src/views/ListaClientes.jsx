@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Container, Grid, CircularProgress, Alert, Box } from '@mui/material'
 import Buscador from '../components/common/Buscador'
 import ClienteCard from '../components/common/ClienteCard'
+import FormularioAlta from '../components/common/FormularioAlta'
 
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([])
@@ -35,6 +36,7 @@ const ListaClientes = () => {
 
   return (
     <Container sx={{ mt: 4 }}>
+      <FormularioAlta />
       <Buscador valor={busqueda} onChange={setBusqueda} />
 
       {cargando && (
