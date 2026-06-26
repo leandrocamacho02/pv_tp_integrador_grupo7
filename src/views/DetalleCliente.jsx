@@ -4,7 +4,8 @@ import { useAdmin } from '../context/AdminContext'
 import {
   CircularProgress, Alert, Card, CardContent,
   Typography, Button, Box, Container, Avatar,
-  Divider, Chip
+  Divider, Chip, Snackbar, Dialog, DialogTitle,
+  DialogContent, DialogActions
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -21,6 +22,8 @@ const DetalleCliente = () => {
   const [cliente, setCliente] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
+  const [snackbar, setSnackbar] = useState({ abierto: false, mensaje: '', tipo: 'error' })
+  const [dialogoAbierto, setDialogoAbierto] = useState(false)
 
   useEffect(() => {
     const obtenerCliente = async () => {
@@ -39,6 +42,7 @@ const DetalleCliente = () => {
   }, [id])
 
   const handleEliminar = async () => {
+    setDialogoAbierto(false)
     try {
       const respuesta = await fetch(`https://fakestoreapi.com/users/${id}`, {
         method: 'DELETE'
@@ -46,7 +50,7 @@ const DetalleCliente = () => {
       if (!respuesta.ok) throw new Error('No se pudo eliminar')
       navigate('/clientes')
     } catch (err) {
-      alert(err.message)
+      setSnackbar({ abierto: true, mensaje: err.message, tipo: 'error' })
     }
   }
 
@@ -154,7 +158,7 @@ const DetalleCliente = () => {
                 color="error"
                 fullWidth
                 startIcon={<DeleteIcon />}
-                onClick={handleEliminar}
+                onClick={() => setDialogoAbierto(true)}
               >
                 Eliminar Cliente de la Base de Datos
               </Button>
@@ -170,6 +174,31 @@ const DetalleCliente = () => {
           </Button>
         </CardContent>
       </Card>
+
+      <Dialog open={dialogoAbierto} onClose={() => setDialogoAbierto(false)}>
+        <DialogTitle>Confirmar eliminación</DialogTitle>
+        <DialogContent>
+          <Typography>
+            ¿Seguro que querés eliminar a <strong>{cliente.name.firstname} {cliente.name.lastname}</strong>? Esta acción no se puede deshacer.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogoAbierto(false)}>Cancelar</Button>
+          <Button color="error" variant="contained" onClick={handleEliminar}>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.abierto}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, abierto: false })}
+      >
+        <Alert severity={snackbar.tipo} onClose={() => setSnackbar({ ...snackbar, abierto: false })}>
+          {snackbar.mensaje}
+        </Alert>
+      </Snackbar>
     </Container>
   )
 }
