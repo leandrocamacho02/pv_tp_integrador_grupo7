@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Container, Grid, CircularProgress, Alert, Box } from '@mui/material'
+import { Container, Grid, CircularProgress, Alert, Box, Typography } from '@mui/material'
 import Buscador from '../components/common/Buscador'
 import ClienteCard from '../components/common/ClienteCard'
+import FormularioAlta from '../components/common/FormularioAlta'
 
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([])
@@ -34,21 +35,32 @@ const ListaClientes = () => {
   })
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4, mb: 6 }}>
+      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+        Gestión de Clientes
+      </Typography>
+
+      <FormularioAlta />
       <Buscador valor={busqueda} onChange={setBusqueda} />
 
       {cargando && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
           <CircularProgress />
         </Box>
       )}
 
       {!cargando && error && (
-        <Alert severity="error">{error}</Alert>
+        <Alert severity="error" sx={{ borderRadius: 2 }}>{error}</Alert>
       )}
 
-      {!cargando && !error && (
-        <Grid container spacing={2}>
+      {!cargando && !error && clientesFiltrados.length === 0 && (
+        <Typography color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
+          No se encontraron clientes con ese criterio de búsqueda.
+        </Typography>
+      )}
+
+      {!cargando && !error && clientesFiltrados.length > 0 && (
+        <Grid container spacing={2.5}>
           {clientesFiltrados.map((cliente) => (
             <Grid item xs={12} sm={6} md={4} key={cliente.id}>
               <ClienteCard cliente={cliente} />
