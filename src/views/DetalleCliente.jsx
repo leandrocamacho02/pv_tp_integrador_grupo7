@@ -28,6 +28,18 @@ const DetalleCliente = () => {
   useEffect(() => {
     const obtenerCliente = async () => {
       try {
+        // Primero buscar en localStorage
+        const clientesLocales = JSON.parse(localStorage.getItem('clientesNuevos') || '[]')
+        const clienteLocal = clientesLocales.find((c) => c.id === Number(id))
+
+        if (clienteLocal) {
+          // Es un cliente local, no necesita fetch
+          setCliente(clienteLocal)
+          setCargando(false)
+          return
+        }
+
+        // Si no está en local, buscarlo en la API normalmente
         const respuesta = await fetch(`https://fakestoreapi.com/users/${id}`)
         if (!respuesta.ok) throw new Error('No se pudo cargar el cliente')
         const datos = await respuesta.json()
@@ -42,15 +54,37 @@ const DetalleCliente = () => {
   }, [id])
 
   const handleEliminar = async () => {
-    setDialogoAbierto(false)
     try {
-      const respuesta = await fetch(`https://fakestoreapi.com/users/${id}`, {
-        method: 'DELETE'
+      const clientesLocales = JSON.parse(localStorage.getItem('clientesNuevos') || '[]')
+      const esLocal = clientesLocales.some((c) => c.id === Number(id))
+
+      if (esLocal) {
+        // Eliminar directamente del array local
+        const actualizados = clientesLocales.filter((c) => c.id !== Number(id))
+        localStorage.setItem('clientesNuevos', JSON.stringify(actualizados))
+      } else {
+        // Cliente de la API: hacer DELETE y marcar como eliminado
+        const respuesta = await fetch(`https://fakestoreapi.com/users/${id}`, {
+          method: 'DELETE'
+        })
+        if (!respuesta.ok) throw new Error('Error al eliminar el cliente')
+
+        const eliminados = JSON.parse(localStorage.getItem('clientesEliminados') || '[]')
+        localStorage.setItem('clientesEliminados', JSON.stringify([...eliminados, Number(id)]))
+      }
+
+      setSnackbar({
+        abierto: true,
+        mensaje: `Cliente eliminado correctamente.`,
+        tipo: 'success'
       })
-      if (!respuesta.ok) throw new Error('No se pudo eliminar')
-      navigate('/clientes')
+      setTimeout(() => navigate('/clientes'), 2000)
     } catch (err) {
-      setSnackbar({ abierto: true, mensaje: err.message, tipo: 'error' })
+      setSnackbar({
+        abierto: true,
+        mensaje: err.message,
+        tipo: 'error'
+      })
     }
   }
 

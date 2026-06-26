@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
-const FormularioAlta = () => {
+const FormularioAlta = ({ onClienteCreado }) => {
   const [formulario, setFormulario] = useState({
     nombre: '',
     apellido: '',
@@ -65,6 +65,32 @@ const FormularioAlta = () => {
       if (!respuesta.ok) throw new Error('Error al crear el cliente')
 
       const datos = await respuesta.json()
+
+      const clienteNuevo = {
+        id: datos.id,
+        email: formulario.email,
+        username: formulario.username,
+        password: formulario.password,
+        name: {
+          firstname: formulario.nombre,
+          lastname: formulario.apellido
+        },
+        address: {
+          city: formulario.ciudad,
+          street: '',
+          number: 0,
+          zipcode: ''
+        },
+        phone: formulario.telefono
+      }
+
+      const clientesGuardados = JSON.parse(localStorage.getItem('clientesNuevos')) || []
+      const clientesActualizados = [...clientesGuardados, clienteNuevo]
+      localStorage.setItem('clientesNuevos', JSON.stringify(clientesActualizados))
+
+      if (onClienteCreado) {
+        onClienteCreado(clienteNuevo)
+      }
 
       setSnackbar({
         abierto: true,

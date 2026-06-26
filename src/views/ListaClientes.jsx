@@ -16,7 +16,10 @@ const ListaClientes = () => {
         const respuesta = await fetch('https://fakestoreapi.com/users')
         if (!respuesta.ok) throw new Error('No se pudo conectar con el servidor')
         const datos = await respuesta.json()
-        setClientes(datos)
+
+        const clientesGuardados = JSON.parse(localStorage.getItem('clientesNuevos')) || []
+
+        setClientes([...datos, ...clientesGuardados])
       } catch (err) {
         setError(err.message)
       } finally {
@@ -25,6 +28,10 @@ const ListaClientes = () => {
     }
     obtenerClientes()
   }, [])
+
+  const handleClienteCreado = (clienteNuevo) => {
+    setClientes((prev) => [...prev, clienteNuevo])
+  }
 
   const clientesFiltrados = clientes.filter((cliente) => {
     const texto = busqueda.toLowerCase()
@@ -40,7 +47,7 @@ const ListaClientes = () => {
         Gestión de Clientes
       </Typography>
 
-      <FormularioAlta />
+      <FormularioAlta onClienteCreado={handleClienteCreado} />
       <Buscador valor={busqueda} onChange={setBusqueda} />
 
       {cargando && (

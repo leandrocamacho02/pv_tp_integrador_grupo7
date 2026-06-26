@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AppBar, Toolbar, Typography, Button, Box, Chip } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import PeopleIcon from '@mui/icons-material/People'
+import Nav from './Nav'
 
 const Header = () => {
   const { admin, cerrarSesion } = useAdmin()
@@ -34,35 +34,7 @@ const Header = () => {
 
         {admin && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            <Button
-              color="inherit"
-              startIcon={<DashboardIcon />}
-              onClick={() => navigate('/dashboard')}
-              size="small"
-              sx={{
-                whiteSpace: 'nowrap',
-                px: 1.5,
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
-              }}
-            >
-              Dashboard
-            </Button>
-
-            <Button
-              color="inherit"
-              startIcon={<PeopleIcon />}
-              onClick={() => navigate('/clientes')}
-              size="small"
-              sx={{
-                whiteSpace: 'nowrap',
-                px: 1.5,
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
-              }}
-            >
-              Clientes
-            </Button>
+            <Nav />
 
             <Box sx={{ width: '1px', height: 24, backgroundColor: 'rgba(255,255,255,0.3)', mx: 0.5 }} />
 
