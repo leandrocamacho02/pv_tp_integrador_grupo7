@@ -30,10 +30,30 @@ const FormularioAlta = ({ onClienteCreado, handleCloseModal }) => {
   }
 
   const handleEnviar = async () => {
-    if (!formulario.nombre || !formulario.apellido || !formulario.email) {
+    if (!formulario.nombre.trim() || !formulario.apellido.trim() || !formulario.email.trim() || !formulario.telefono.trim()) {
       setSnackbar({
         abierto: true,
-        mensaje: 'Nombre, apellido y email son obligatorios.',
+        mensaje: 'Faltan completar campos obligatorios.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formulario.email)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El correo electrónico no es válido.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const telefonoRegex = /^[0-9]{8,15}$/
+    if (!telefonoRegex.test(formulario.telefono)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El teléfono debe tener entre 8 y 15 números, sin letras.',
         tipo: 'error'
       })
       return
