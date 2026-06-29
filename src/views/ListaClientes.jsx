@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Container, Grid, CircularProgress, Alert, Box, Typography } from '@mui/material'
+import { Container, Grid, CircularProgress, Alert, Box, Typography, Button } from '@mui/material'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import Buscador from '../components/common/Buscador'
 import ClienteCard from '../components/common/ClienteCard'
-import FormularioAlta from '../components/common/FormularioAlta'
+import ModalAltaCliente from '../components/common/ModalAltaCliente'
 
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
   const [busqueda, setBusqueda] = useState('')
+  const [modalAbierto, setModalAbierto] = useState(false)
 
   useEffect(() => {
     const obtenerClientes = async () => {
@@ -43,12 +45,29 @@ const ListaClientes = () => {
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        Gestión de Clientes
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h5" fontWeight="bold">
+          Gestión de Clientes
+        </Typography>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          startIcon={<PersonAddIcon />}
+          onClick={() => setModalAbierto(true)}
+        >
+          Agregar Cliente
+        </Button>
+      </Box>
 
-      <FormularioAlta onClienteCreado={handleClienteCreado} />
-      <Buscador valor={busqueda} onChange={setBusqueda} />
+      <ModalAltaCliente 
+        open={modalAbierto} 
+        handleClose={() => setModalAbierto(false)} 
+        onClienteCreado={handleClienteCreado} 
+      />
+
+      <Box sx={{ mb: 4 }}>
+        <Buscador valor={busqueda} onChange={setBusqueda} />
+      </Box>
 
       {cargando && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>

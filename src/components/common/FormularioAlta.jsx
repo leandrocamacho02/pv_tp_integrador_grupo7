@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import {
   Box, Typography, TextField, Button,
-  Paper, Grid, Snackbar, Alert
+  Grid, Snackbar, Alert
 } from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
-const FormularioAlta = ({ onClienteCreado }) => {
+const FormularioAlta = ({ onClienteCreado, handleCloseModal }) => {
   const [formulario, setFormulario] = useState({
     nombre: '',
     apellido: '',
@@ -108,6 +108,10 @@ const FormularioAlta = ({ onClienteCreado }) => {
         password: ''
       })
 
+      setTimeout(() => {
+        if (handleCloseModal) handleCloseModal()
+      }, 1500)
+
     } catch (err) {
       setSnackbar({
         abierto: true,
@@ -120,7 +124,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
   }
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+    <Box sx={{ p: 1, mb: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <PersonAddIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">
@@ -145,10 +149,10 @@ const FormularioAlta = ({ onClienteCreado }) => {
           <TextField label="Ciudad" name="ciudad" value={formulario.ciudad} onChange={handleChange} fullWidth size="small" />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Username" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
+          <TextField label="Nombre de usuario" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Password" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
+          <TextField label="Contraseña" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
         </Grid>
         <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
           <Button
@@ -173,7 +177,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
           {snackbar.mensaje}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   )
 }
 
