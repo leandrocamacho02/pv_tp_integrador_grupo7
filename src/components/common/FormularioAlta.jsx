@@ -1,17 +1,29 @@
 import { useState } from 'react'
 import {
   Box, Typography, TextField, Button,
-  Paper, Grid, Snackbar, Alert
+  Grid, Snackbar, Alert, MenuItem
 } from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
-const FormularioAlta = ({ onClienteCreado }) => {
+const ciudadesOpciones = [
+  'Seleccione su ciudad',
+  'San Salvador de Jujuy',
+  'Perico',
+  'Palpalá',
+  'San Pedro',
+  'Libertador General San Martín',
+  'El Carmen',
+  'Otra'
+]
+
+const FormularioAlta = ({ onClienteCreado, handleCloseModal }) => {
   const [formulario, setFormulario] = useState({
     nombre: '',
     apellido: '',
     email: '',
     telefono: '',
-    ciudad: '',
+    ciudad: 'Seleccione su ciudad',
+    ciudadOtra: '',
     username: '',
     password: ''
   })
@@ -30,10 +42,32 @@ const FormularioAlta = ({ onClienteCreado }) => {
   }
 
   const handleEnviar = async () => {
-    if (!formulario.nombre || !formulario.apellido || !formulario.email) {
+    const ciudadFinal = formulario.ciudad === 'Otra' ? formulario.ciudadOtra : formulario.ciudad
+
+    if (!formulario.nombre.trim() || !formulario.apellido.trim() || !formulario.email.trim() || !formulario.telefono.trim() || ciudadFinal === 'Seleccione su ciudad' || !ciudadFinal.trim()) {
       setSnackbar({
         abierto: true,
-        mensaje: 'Nombre, apellido y email son obligatorios.',
+        mensaje: 'Faltan completar campos obligatorios o seleccionar una ciudad válida.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formulario.email)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El correo electrónico no es válido.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const telefonoRegex = /^[0-9]{8,15}$/
+    if (!telefonoRegex.test(formulario.telefono)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El teléfono debe tener entre 8 y 15 números, sin letras.',
         tipo: 'error'
       })
       return
@@ -53,7 +87,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
             lastname: formulario.apellido
           },
           address: {
-            city: formulario.ciudad,
+            city: ciudadFinal,
             street: '',
             number: 0,
             zipcode: ''
@@ -76,7 +110,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
           lastname: formulario.apellido
         },
         address: {
-          city: formulario.ciudad,
+          city: ciudadFinal,
           street: '',
           number: 0,
           zipcode: ''
@@ -103,10 +137,15 @@ const FormularioAlta = ({ onClienteCreado }) => {
         apellido: '',
         email: '',
         telefono: '',
-        ciudad: '',
+        ciudad: 'Seleccione su ciudad',
+        ciudadOtra: '',
         username: '',
         password: ''
       })
+
+      setTimeout(() => {
+        if (handleCloseModal) handleCloseModal()
+      }, 1500)
 
     } catch (err) {
       setSnackbar({
@@ -120,37 +159,48 @@ const FormularioAlta = ({ onClienteCreado }) => {
   }
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+    <Box sx={{ p: 1, mb: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
         <PersonAddIcon color="primary" />
         <Typography variant="h6" fontWeight="bold">
           Alta de Nuevo Cliente
         </Typography>
       </Box>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField label="Nombre" name="nombre" value={formulario.nombre} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField label="Apellido" name="apellido" value={formulario.apellido} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField label="Email" name="email" value={formulario.email} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField label="Teléfono" name="telefono" value={formulario.telefono} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Ciudad" name="ciudad" value={formulario.ciudad} onChange={handleChange} fullWidth size="small" />
+        <Grid item xs={12} sm={6} md={4}>
+          <TextField select label="Ciudad" name="ciudad" value={formulario.ciudad} onChange={handleChange} fullWidth size="small">
+            {ciudadesOpciones.map((opcion) => (
+              <MenuItem key={opcion} value={opcion} disabled={opcion === 'Seleccione su ciudad'}>
+                {opcion}
+              </MenuItem>
+            ))}
+          </TextField>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Username" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
+        {formulario.ciudad === 'Otra' && (
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField label="Indique su ciudad" name="ciudadOtra" value={formulario.ciudadOtra} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+        )}
+        <Grid item xs={12} sm={6} md={4}>
+          <TextField label="Nombre de usuario" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Password" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
+        <Grid item xs={12} sm={6} md={4}>
+          <TextField label="Contraseña" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
         </Grid>
-        <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center' }}>
           <Button
             variant="contained"
             color="primary"
@@ -173,7 +223,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
           {snackbar.mensaje}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   )
 }
 
