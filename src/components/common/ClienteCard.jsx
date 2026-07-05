@@ -1,9 +1,10 @@
-import { Card, CardContent, Typography, Button, Box, Avatar } from '@mui/material'
+import { Card, CardContent, Typography, Button, Box, Avatar, Chip } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import BadgeIcon from '@mui/icons-material/Badge'
 
 const ClienteCard = ({ cliente }) => {
   const iniciales = `${cliente.name.firstname[0]}${cliente.name.lastname[0]}`.toUpperCase()
@@ -22,27 +23,27 @@ const ClienteCard = ({ cliente }) => {
             {iniciales}
           </Avatar>
           <Box>
-            <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
+            <Typography variant="h6" sx={{ lineHeight: 1.2, fontWeight: 600 }}>
               {cliente.name.firstname} {cliente.name.lastname}
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <EmailOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <EmailOutlinedIcon sx={{ fontSize: 20, color: 'primary.main' }} />
             <Typography variant="body2" color="text.secondary" noWrap>
               {cliente.email}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <PhoneOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <PhoneOutlinedIcon sx={{ fontSize: 20, color: 'primary.main' }} />
             <Typography variant="body2" color="text.secondary">
               {cliente.phone}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LocationOnOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <LocationOnOutlinedIcon sx={{ fontSize: 20, color: 'primary.main' }} />
             <Typography variant="body2" color="text.secondary">
               {cliente.address.city}
             </Typography>
@@ -50,18 +51,23 @@ const ClienteCard = ({ cliente }) => {
         </Box>
       </CardContent>
 
-      <Box sx={{ p: 2, pt: 0 }}>
+      <Box sx={{ p: 2, pt: 0, px: 3, pb: 3 }}>
         <Button
           component={Link}
           to={`/clientes/${cliente.id}`}
           variant="contained"
           fullWidth
-          size="small"
+          size="medium"
           endIcon={<ArrowForwardIcon />}
           sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 600,
             background: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
+            boxShadow: '0 4px 6px -1px rgba(79, 70, 229, 0.3)',
             '&:hover': {
               background: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
+              boxShadow: '0 6px 8px -1px rgba(79, 70, 229, 0.4)',
             }
           }}
         >

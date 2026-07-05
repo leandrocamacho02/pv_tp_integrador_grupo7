@@ -14,7 +14,8 @@ const FormularioAlta = () => {
     apellido: '',
     email: '',
     telefono: '',
-    ciudad: '',
+    ciudad: 'Seleccione su ciudad',
+    ciudadOtra: '',
     username: '',
     password: ''
   })
@@ -33,10 +34,32 @@ const FormularioAlta = () => {
   }
 
   const handleEnviar = async () => {
-    if (!formulario.nombre || !formulario.apellido || !formulario.email) {
+    const ciudadFinal = formulario.ciudad === 'Otra' ? formulario.ciudadOtra : formulario.ciudad
+
+    if (!formulario.nombre.trim() || !formulario.apellido.trim() || !formulario.email.trim() || !formulario.telefono.trim() || ciudadFinal === 'Seleccione su ciudad' || !ciudadFinal.trim()) {
       setSnackbar({
         abierto: true,
-        mensaje: 'Nombre, apellido y email son obligatorios.',
+        mensaje: 'Faltan completar campos obligatorios o seleccionar una ciudad válida.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formulario.email)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El correo electrónico no es válido.',
+        tipo: 'error'
+      })
+      return
+    }
+
+    const telefonoRegex = /^[0-9]{8,15}$/
+    if (!telefonoRegex.test(formulario.telefono)) {
+      setSnackbar({
+        abierto: true,
+        mensaje: 'El teléfono debe tener entre 8 y 15 números, sin letras.',
         tipo: 'error'
       })
       return
@@ -56,7 +79,7 @@ const FormularioAlta = () => {
             lastname: formulario.apellido
           },
           address: {
-            city: formulario.ciudad,
+            city: ciudadFinal,
             street: '',
             number: 0,
             zipcode: ''
@@ -79,7 +102,7 @@ const FormularioAlta = () => {
           lastname: formulario.apellido
         },
         address: {
-          city: formulario.ciudad,
+          city: ciudadFinal,
           street: '',
           number: 0,
           zipcode: ''
@@ -101,7 +124,8 @@ const FormularioAlta = () => {
         apellido: '',
         email: '',
         telefono: '',
-        ciudad: '',
+        ciudad: 'Seleccione su ciudad',
+        ciudadOtra: '',
         username: '',
         password: ''
       })
@@ -109,9 +133,14 @@ const FormularioAlta = () => {
       setTimeout(() => navigate('/clientes'), 2000)
 
     } catch (err) {
+      let mensajeError = err.message
+      if (err.message === 'Failed to fetch' || err.message === 'Network error' || !navigator.onLine) {
+        mensajeError = 'Problemas en la red. Compruebe su conexión a internet.'
+      }
+      
       setSnackbar({
         abierto: true,
-        mensaje: err.message,
+        mensaje: mensajeError,
         tipo: 'error'
       })
     } finally {
