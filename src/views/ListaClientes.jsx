@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Container, Grid, CircularProgress, Alert, Box, Typography } from '@mui/material'
+import { Container, Grid, CircularProgress, Alert, Box, Typography, Button } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import AddIcon from '@mui/icons-material/Add'
 import Buscador from '../components/common/Buscador'
 import ClienteCard from '../components/common/ClienteCard'
-import FormularioAlta from '../components/common/FormularioAlta'
 
 const ListaClientes = () => {
   const [clientes, setClientes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
   const [busqueda, setBusqueda] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     const obtenerClientes = async () => {
@@ -16,10 +18,11 @@ const ListaClientes = () => {
         const respuesta = await fetch('https://fakestoreapi.com/users')
         if (!respuesta.ok) throw new Error('No se pudo conectar con el servidor')
         const datos = await respuesta.json()
-
         const clientesGuardados = JSON.parse(localStorage.getItem('clientesNuevos')) || []
-
-        setClientes([...datos, ...clientesGuardados])
+        const eliminados = JSON.parse(localStorage.getItem('clientesEliminados')) || []
+        const todos = [...datos, ...clientesGuardados]
+        const filtrados = todos.filter((c) => !eliminados.includes(c.id))
+        setClientes(filtrados)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -28,10 +31,6 @@ const ListaClientes = () => {
     }
     obtenerClientes()
   }, [])
-
-  const handleClienteCreado = (clienteNuevo) => {
-    setClientes((prev) => [...prev, clienteNuevo])
-  }
 
   const clientesFiltrados = clientes.filter((cliente) => {
     const texto = busqueda.toLowerCase()
@@ -43,11 +42,19 @@ const ListaClientes = () => {
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        Gestión de Clientes
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" fontWeight="bold">
+          Gestión de Clientes
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/clientes/nuevo')}
+        >
+          Nuevo Cliente
+        </Button>
+      </Box>
 
-      <FormularioAlta onClienteCreado={handleClienteCreado} />
       <Buscador valor={busqueda} onChange={setBusqueda} />
 
       {cargando && (
@@ -69,7 +76,7 @@ const ListaClientes = () => {
       {!cargando && !error && clientesFiltrados.length > 0 && (
         <Grid container spacing={2.5}>
           {clientesFiltrados.map((cliente) => (
-            <Grid item xs={12} sm={6} md={4} key={cliente.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={cliente.id}>
               <ClienteCard cliente={cliente} />
             </Grid>
           ))}

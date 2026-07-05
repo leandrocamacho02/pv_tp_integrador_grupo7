@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import {
   Box, Typography, TextField, Button,
-  Paper, Grid, Snackbar, Alert
+  Paper, Grid, Snackbar, Alert, Container
 } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
-const FormularioAlta = ({ onClienteCreado }) => {
+const FormularioAlta = () => {
+  const navigate = useNavigate()
   const [formulario, setFormulario] = useState({
     nombre: '',
     apellido: '',
@@ -67,7 +70,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
       const datos = await respuesta.json()
 
       const clienteNuevo = {
-        id: datos.id,
+        id: Date.now(),
         email: formulario.email,
         username: formulario.username,
         password: formulario.password,
@@ -85,12 +88,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
       }
 
       const clientesGuardados = JSON.parse(localStorage.getItem('clientesNuevos')) || []
-      const clientesActualizados = [...clientesGuardados, clienteNuevo]
-      localStorage.setItem('clientesNuevos', JSON.stringify(clientesActualizados))
-
-      if (onClienteCreado) {
-        onClienteCreado(clienteNuevo)
-      }
+      localStorage.setItem('clientesNuevos', JSON.stringify([...clientesGuardados, clienteNuevo]))
 
       setSnackbar({
         abierto: true,
@@ -108,6 +106,8 @@ const FormularioAlta = ({ onClienteCreado }) => {
         password: ''
       })
 
+      setTimeout(() => navigate('/clientes'), 2000)
+
     } catch (err) {
       setSnackbar({
         abierto: true,
@@ -120,48 +120,58 @@ const FormularioAlta = ({ onClienteCreado }) => {
   }
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <PersonAddIcon color="primary" />
-        <Typography variant="h6" fontWeight="bold">
-          Alta de Nuevo Cliente
-        </Typography>
-      </Box>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate('/clientes')}
+        sx={{ mb: 2 }}
+      >
+        Volver al listado
+      </Button>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Nombre" name="nombre" value={formulario.nombre} onChange={handleChange} fullWidth size="small" />
+      <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+          <PersonAddIcon color="primary" />
+          <Typography variant="h6" fontWeight="bold">
+            Alta de Nuevo Cliente
+          </Typography>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Nombre" name="nombre" value={formulario.nombre} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Apellido" name="apellido" value={formulario.apellido} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Email" name="email" value={formulario.email} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Teléfono" name="telefono" value={formulario.telefono} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Ciudad" name="ciudad" value={formulario.ciudad} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Username" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Password" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleEnviar}
+              disabled={cargando}
+            >
+              {cargando ? 'Enviando...' : 'Agregar Cliente'}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Apellido" name="apellido" value={formulario.apellido} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Email" name="email" value={formulario.email} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Teléfono" name="telefono" value={formulario.telefono} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Ciudad" name="ciudad" value={formulario.ciudad} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Username" name="username" value={formulario.username} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField label="Password" name="password" type="password" value={formulario.password} onChange={handleChange} fullWidth size="small" />
-        </Grid>
-        <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleEnviar}
-            disabled={cargando}
-          >
-            {cargando ? 'Enviando...' : 'Agregar Cliente'}
-          </Button>
-        </Grid>
-      </Grid>
+      </Paper>
 
       <Snackbar
         open={snackbar.abierto}
@@ -173,7 +183,7 @@ const FormularioAlta = ({ onClienteCreado }) => {
           {snackbar.mensaje}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Container>
   )
 }
 

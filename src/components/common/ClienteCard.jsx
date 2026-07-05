@@ -9,7 +9,7 @@ const ClienteCard = ({ cliente }) => {
   const iniciales = `${cliente.name.firstname[0]}${cliente.name.lastname[0]}`.toUpperCase()
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ height: 240, display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ flexGrow: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
           <Avatar sx={{
@@ -24,9 +24,6 @@ const ClienteCard = ({ cliente }) => {
           <Box>
             <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
               {cliente.name.firstname} {cliente.name.lastname}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              ID #{cliente.id}
             </Typography>
           </Box>
         </Box>

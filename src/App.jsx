@@ -7,6 +7,7 @@ import Login from './views/Login'
 import Dashboard from './views/Dashboard'
 import ListaClientes from './views/ListaClientes'
 import DetalleCliente from './views/DetalleCliente'
+import FormularioAlta from './components/common/FormularioAlta'
 
 const RutaProtegida = ({ children }) => {
   const { admin } = useAdmin()
@@ -30,6 +31,11 @@ const App = () => {
             <Route path="/clientes" element={
               <RutaProtegida>
                 <ListaClientes />
+              </RutaProtegida>
+            } />
+            <Route path="/clientes/nuevo" element={
+              <RutaProtegida>
+                <FormularioAlta />
               </RutaProtegida>
             } />
             <Route path="/clientes/:id" element={
