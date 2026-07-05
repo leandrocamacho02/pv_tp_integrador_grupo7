@@ -148,9 +148,14 @@ const FormularioAlta = ({ onClienteCreado, handleCloseModal }) => {
       }, 1500)
 
     } catch (err) {
+      let mensajeError = err.message
+      if (err.message === 'Failed to fetch' || err.message === 'Network error' || !navigator.onLine) {
+        mensajeError = 'Problemas en la red. Compruebe su conexión a internet.'
+      }
+      
       setSnackbar({
         abierto: true,
-        mensaje: err.message,
+        mensaje: mensajeError,
         tipo: 'error'
       })
     } finally {
