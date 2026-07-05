@@ -86,7 +86,7 @@ const Login = () => {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
-            label="Nombre del Administrador"
+            label="Nombre de Usuario"
             name="nombre"
             value={formulario.nombre}
             onChange={handleChange}
